@@ -1,0 +1,7 @@
+*.exe binary
+*.dll binary
+*.pak binary
+*.dat binary
+*.bin binary
+*.jar binary
+*.bfc binary

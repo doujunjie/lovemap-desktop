@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'" />
+    <title>恋爱地图 · 设置</title>
+    <style>
+        :root {
+            --pink: #e8617d;
+            --pink-soft: #fff1f4;
+            --text: #2b2b33;
+            --muted: #7a7a86;
+            --line: #ececf1;
+            --bg: #fafafc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 24px 56px;
+        }
+        header { text-align: center; max-width: 760px; }
+        h1 { font-size: 26px; margin: 0 0 8px; letter-spacing: 1px; }
+        .sub { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0; }
+
+        .cards { display: grid; grid-template-columns: repeat(2, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 860px; margin-top: 32px; }
+        .card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 6px 24px rgba(24, 24, 40, 0.04);
+        }
+        .card h2 { font-size: 17px; margin: 0 0 6px; }
+        .card .tag { display: inline-block; font-size: 12px; color: var(--pink); background: var(--pink-soft); border-radius: 999px; padding: 2px 10px; margin-bottom: 12px; }
+        .card p { color: var(--muted); font-size: 13px; line-height: 1.8; margin: 0 0 16px; flex: 1; }
+
+        button {
+            font: inherit;
+            border: none;
+            border-radius: 10px;
+            padding: 11px 18px;
+            cursor: pointer;
+            transition: transform .08s ease, opacity .2s ease;
+        }
+        button:active { transform: scale(0.985); }
+        button.primary { background: var(--pink); color: #fff; }
+        button.ghost { background: #fff; color: var(--text); border: 1px solid var(--line); }
+        button:disabled { opacity: .55; cursor: default; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        input[type=text] {
+            width: 100%;
+            font: inherit;
+            padding: 11px 14px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        input[type=text]:focus { border-color: var(--pink); }
+
+        .panel { display: none; width: 100%; max-width: 860px; }
+        .panel.active { display: block; }
+
+        .info-box {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 28px;
+        }
+        .info-box h3 { margin: 0 0 14px; font-size: 16px; }
+        .addr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: var(--pink-soft);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        .addr code { font-family: Consolas, Menlo, monospace; font-size: 15px; color: #b23b56; }
+        .hint { color: var(--muted); font-size: 12.5px; line-height: 1.8; margin: 12px 0 0; }
+        .status { font-size: 13px; margin-top: 14px; min-height: 20px; }
+        .status.error { color: #d0342c; }
+        .status.ok { color: #1a9c62; }
+        .muted { color: var(--muted); font-size: 12.5px; }
+        .divider { height: 1px; background: var(--line); margin: 20px 0; }
+        .kv { display: flex; justify-content: space-between; gap: 16px; font-size: 13px; padding: 6px 0; }
+        .kv span:first-child { color: var(--muted); }
+    </style>
+</head>
+<body>
+<header>
+    <h1>恋爱地图</h1>
+    <p class="sub">
+        两个人看同一份地图数据。先决定这台电脑扮演什么角色：<br />
+        <b>主机</b>负责保存数据（要一直开着），<b>客户端</b>只负责连上去看。
+    </p>
+</header>
+
+<!-- ① 首次选择 -->
+<section id="panel-choose" class="panel">
+    <div class="cards">
+        <div class="card">
+            <span class="tag">建议第一次用这个</span>
+            <h2>这台电脑当主机</h2>
+            <p>
+                数据存在这台电脑上，不需要安装 MySQL、也不需要装 Java。<br />
+                启动后把「局域网地址」发给 TA，同一个 WiFi 下手机或电脑都能打开。
+            </p>
+            <button class="primary" id="btn-host">用这台电脑当主机</button>
+        </div>
+        <div class="card">
+            <span class="tag">第二台设备用这个</span>
+            <h2>连接到对方的主机</h2>
+            <p>
+                如果 TA 已经在自己的电脑上开了主机模式，这里填 TA 的地址就能直接用，<br />
+                数据都在 TA 那台机器上。
+            </p>
+            <input type="text" id="input-url" placeholder="例如 192.168.1.8:8080" />
+            <div class="row">
+                <button class="ghost" id="btn-test">测试连接</button>
+                <button class="primary" id="btn-connect">连接并使用</button>
+            </div>
+        </div>
+    </div>
+    <p class="status" id="status-choose"></p>
+</section>
+
+<!-- ② 主机模式 -->
+<section id="panel-host" class="panel">
+    <div class="info-box">
+        <h3>这台电脑就是主机了</h3>
+        <p class="hint" style="margin-top:0">
+            同一个 WiFi 下，让 TA 用手机/电脑浏览器打开下面任意一个地址即可（手机和电脑要在同一个 WiFi）：
+        </p>
+        <div id="lan-list"></div>
+        <p class="hint">
+            第一次启动 Windows 可能弹「是否允许防火墙访问」，请勾选<b>专用网络</b>并允许，否则 TA 连不上。<br />
+            不在一起的时候：装一个免费的 Tailscale，两台设备登录同一账号，把上面地址换成本机的 Tailscale IP（100.x.x.x）即可。
+        </p>
+        <div class="divider"></div>
+        <div class="row">
+            <button class="primary" id="btn-open-host">打开应用</button>
+            <button class="ghost" id="btn-reset-host">重新设置</button>
+            <button class="ghost" id="btn-datadir">打开数据目录</button>
+        </div>
+    </div>
+</section>
+
+<!-- ③ 客户端模式 -->
+<section id="panel-client" class="panel">
+    <div class="info-box">
+        <h3>已连接到对方的主机</h3>
+        <div class="kv"><span>地址</span><span id="client-url">-</span></div>
+        <p class="hint">
+            数据保存在对方那台电脑上。对方没开机、或者换了网络，这里就会连不上。
+        </p>
+        <div class="divider"></div>
+        <div class="row">
+            <button class="primary" id="btn-open-client">打开应用</button>
+            <button class="ghost" id="btn-reset-client">换成别的地址</button>
+        </div>
+    </div>
+</section>
+
+<!-- ④ 正在启动 -->
+<section id="panel-busy" class="panel">
+    <div class="info-box">
+        <h3>正在启动本地服务…</h3>
+        <p class="hint" style="margin-top:0">第一次启动需要初始化数据库，大概几秒钟，请不要关闭窗口。</p>
+    </div>
+</section>
+
+<script src="./setup.js"></script>
+</body>
+</html>
