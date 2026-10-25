@@ -5,10 +5,13 @@
 
 ## 下载安装包
 
-安装包不在仓库里，请到 **[Releases](https://github.com/doujunjie/lovemap-desktop/releases)** 下载 `恋爱地图.exe`（约 180 MB）。
-本仓库只包含程序本体之外的文件（`resources/` 与文档），**不含 exe**——因为 exe 超过 GitHub 单文件 100 MB 限制。
+安装包不放在仓库里（exe 有 188 MB，超过 GitHub 单文件 100 MB 限制），请在
+**[Releases · doujunjie/lovemap-desktop](https://github.com/doujunjie/lovemap-desktop/releases)** 下载
+`恋爱地图-1.0.0-win64.zip`，解压后双击 `恋爱地图.exe`。
 
-- 程序位置：下载得到的 `恋爱地图.exe`，放在任意文件夹都可以
+> ⚠️ 别只把 exe 单独拷出来——它依赖同目录的 `resources\`、`locales\` 与一批 DLL，单独放会启动失败。整个解压出来的文件夹一起用即可，无需安装任何东西。
+
+- 程序位置：解压后的 `恋爱地图.exe`
 - 数据位置：`%APPDATA%\恋爱地图\data`（即 `C:\Users\<你>\AppData\Roaming\恋爱地图\data`）
 - 两个人一起用：一台电脑当"主机"，另一台用浏览器或本程序连过来
 
